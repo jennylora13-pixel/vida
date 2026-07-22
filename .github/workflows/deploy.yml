@@ -29,20 +29,28 @@ jobs:
       - name: Preparar o Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
 
       - name: Instalar dependências
         run: npm ci
 
-      # base=/vida/ porque o site fica em usuario.github.io/vida/
+      # Descobre o caminho certo pelo nome do repositório:
+      # - repo "usuario.github.io"  -> site na raiz  -> base "/"
+      # - qualquer outro nome (ex: vida) -> base "/<repo>/"
       - name: Compilar o app
-        run: npm run build -- --base=/vida/
+        run: |
+          REPO="${{ github.event.repository.name }}"
+          if [[ "$REPO" == *.github.io ]]; then
+            BASE="/"
+          else
+            BASE="/$REPO/"
+          fi
+          echo "Publicando com base=$BASE"
+          npm run build -- --base="$BASE"
 
-      - name: Configurar o Pages (habilita na primeira vez)
+      - name: Configurar o Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Enviar os arquivos compilados
         uses: actions/upload-pages-artifact@v3
