@@ -1,26 +1,37 @@
-# Planner VIDA · 4 semanas 🌹
+# FIRMES · Vida com Deus 👑
 
-App de acompanhamento de dieta, rotina, treino e cuidado com corpo e espírito —
-_Vestidas de Intimidade com Deus para Amar_. Quatro semanas: as duas primeiras da
-Dieta VIDA (com Apple Day) e as duas últimas do Planner da Jen (manutenção, treino
-e marmita do marido).
+App cristão evangélico com a **Bíblia como base**. Foi feito para **tirar a pessoa
+da paralisia espiritual e da procrastinação**, ajudando a viver *hoje* aquilo que
+Deus chamou você a fazer — com fundamento na Palavra.
 
-## O que há de novo (v2)
+> _"Ensina-nos a contar os nossos dias, para que alcancemos coração sábio."_ — Salmo 90:12
 
-- **🎉 Animações** — checagens com "pop", cartões que aparecem suaves, coroa que
-  brilha ao completar, confete quando uma seção chega a 100% e toasts deslizando.
-- **🖼️ Ilustrações** — ramo de rosa, faixa de oliveira e coroa em SVG (sem
-  depender de internet), no topo, no rodapé e na tela de entrada.
-- **💬 Assistente VIDA** — chatbot flutuante que tira dúvidas sobre chás, jejum,
-  Apple Day, treino e suplementos usando o conteúdo do próprio app. **Aprende com
-  você**: quando não sabe algo, você ensina a resposta e ele guarda para a próxima.
-  Também reforça as respostas marcadas como úteis.
-- **🔎 Buscador** — uma aba (e um atalho no topo) que procura em receitas, chás,
-  temas, refeições, hábitos e lista de compras, com atalho direto para cada item.
-- **🔔 Avisos** — lembretes nos horários das refeições e tarefas (café 7h30,
-  almoço 12h, lanche 16h, jantar 19h, chá + magnésio 20h30, telas 21h30…). Aparecem
-  na tela com o app aberto e, se o navegador permitir, como notificação do sistema.
-  Cada horário pode ser ligado/desligado.
+## O que a app tem
+
+- **📖 Bíblia por temas** — versículos-chave contra a paralisia, a procrastinação,
+  o medo, sobre dinheiro, fé e identidade em Cristo. Inclui um **plano de leitura
+  de 30 dias** (Evangelhos + Salmos) com progresso salvo.
+- **👑 Afirmações (co-criações)** — as **promessas de Deus oradas em 1ª pessoa**
+  ("Eu sou...", "O meu Deus supre..."). Concordar em voz alta com o que Deus já
+  disse sobre você, sempre com a referência bíblica.
+- **🌿 Disciplinas espirituais (prático)** — oração, Palavra, meditação, jejum,
+  adoração, serviço, silêncio, generosidade e diário. Cada uma com a base bíblica,
+  o *porquê* e um passo "**comece hoje**". Marcação diária de progresso.
+- **📚 Grandes autores de todos os tempos** — Spurgeon, John Piper, A. W. Tozer,
+  C. S. Lewis, John Bunyan, Jonathan Edwards, Oswald Chambers, Andrew Murray,
+  Dietrich Bonhoeffer, Elisabeth Elliot, George Müller, Timothy Keller, Agostinho
+  e Tomás de Kempis — com bio, uma frase marcante e livros recomendados.
+- **💰 Finanças com Deus** — "Jesus falou muito de dinheiro". Princípios bíblicos
+  de mordomia (dízimo, fuga das dívidas, contentamento, generosidade) e um
+  **orçamento sugerido** que calcula as faixas a partir da sua renda.
+- **🔔 Rotina, lembretes e "apertadores"** — cria uma rotina espiritual com avisos
+  nos horários (devocional, declarar a promessa, disciplina, diário). Os
+  **apertadores** são mensagens que despertam para a urgência de viver hoje
+  (memento mori bíblico), para você não adiar o que importa. Funcionam como toast
+  no app e, com permissão, como notificação do sistema.
+
+Tudo funciona **offline** — nenhum conteúdo depende da internet. O progresso é
+salvo no próprio dispositivo.
 
 ## Rodar localmente
 
@@ -35,21 +46,13 @@ npm run preview  # serve o build
 
 | Arquivo | O quê |
 | --- | --- |
-| `src/PlannerVida.jsx` | Componente principal e todas as telas |
-| `src/data.js` | Todo o conteúdo (dias, receitas, chás, temas, horários) |
-| `src/ChatBot.jsx` | Assistente VIDA (interface do chat) |
-| `src/chatBrain.js` | Cérebro do assistente: FAQ, busca e aprendizado |
-| `src/searchIndex.js` | Índice e busca usados pelo Buscador e pelo assistente |
-| `src/avisos.js` | Agendamento e disparo dos lembretes |
-| `src/Ilustracoes.jsx` | Ilustrações SVG |
-| `src/storage.js` | Armazenamento (usa `window.storage` ou `localStorage`) |
+| `src/App.jsx` | App principal e todas as telas |
+| `src/appData.js` | Todo o conteúdo (versículos, temas, autores, afirmações, disciplinas, finanças, apertadores) |
+| `src/lembretes.js` | Sistema de lembretes/apertadores nos horários |
+| `src/storage.js` | Persistência (localStorage ou storage do ambiente) |
+| `src/main.jsx` | Ponto de entrada React |
 
-## Privacidade
-
-Tudo é guardado **no próprio aparelho** (via `window.storage` no ambiente Artifact
-ou `localStorage` no navegador). O assistente e a busca funcionam localmente — nada
-é enviado para fora. O código de acesso apenas separa progressos diferentes; não é
-segurança de verdade, então não use senha de banco ou e-mail.
-
-> Este app é educativo e não substitui o acompanhamento de médico e nutricionista —
-> principalmente em gestação, amamentação, uso de medicação ou doença crônica.
+> Aviso pastoral: as afirmações e apertadores servem para nos alinhar à Palavra e
+> à obediência — não são fórmula mágica nem "positividade" vazia. A base é sempre
+> o que Deus já disse na Bíblia. As frases dos autores são atribuições conhecidas;
+> confira sempre nas fontes originais.
