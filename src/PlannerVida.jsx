@@ -25,21 +25,23 @@ function chaveDe(nome, codigo) {
 }
 const META_COPOS = 8;
 const META_PROTEINA_PADRAO = 110; // g/dia — meta padrão (editável). Base: ganho muscular ~1,6 g/kg.
-// Alimentos ricos em proteína com valor aproximado por porção (em gramas de proteína)
-const PROTEINAS = [
-  { nome: "Frango grelhado 120g", g: 30, emoji: "🍗" },
-  { nome: "Peixe 120g", g: 26, emoji: "🐟" },
-  { nome: "Carne magra 120g", g: 32, emoji: "🥩" },
-  { nome: "Ovo (1 un.)", g: 6, emoji: "🥚" },
-  { nome: "Whey (1 scoop)", g: 24, emoji: "🥤" },
-  { nome: "Atum (1 lata)", g: 26, emoji: "🥫" },
-  { nome: "Iogurte natural (170g)", g: 15, emoji: "🥛" },
-  { nome: "Queijo cottage (100g)", g: 11, emoji: "🧀" },
-  { nome: "Concha de feijão (65g)", g: 5, emoji: "🫘" },
-  { nome: "Concha de lentilha (65g)", g: 9, emoji: "🥣" },
-  { nome: "Concha de grão de bico (65g)", g: 7, emoji: "🥣" },
-  { nome: "Tofu (100g)", g: 8, emoji: "🧈" },
+// Alimentos ricos em proteína. por100 = g de proteína por 100g do alimento (já preparado);
+// porcao = porção sugerida em g. A proteína é calculada: por100 * gramas / 100.
+const PROTEINA_ALIMENTOS = [
+  { nome: "Frango grelhado", emoji: "🍗", por100: 31, porcao: 120 },
+  { nome: "Peixe (tilápia)", emoji: "🐟", por100: 26, porcao: 120 },
+  { nome: "Carne magra (patinho)", emoji: "🥩", por100: 31, porcao: 120 },
+  { nome: "Ovo", emoji: "🥚", por100: 13, porcao: 50 },
+  { nome: "Whey (pó)", emoji: "🥤", por100: 80, porcao: 30 },
+  { nome: "Atum (em água)", emoji: "🥫", por100: 25, porcao: 120 },
+  { nome: "Iogurte grego", emoji: "🥛", por100: 9, porcao: 170 },
+  { nome: "Queijo cottage", emoji: "🧀", por100: 11, porcao: 100 },
+  { nome: "Feijão cozido", emoji: "🫘", por100: 5, porcao: 130 },
+  { nome: "Lentilha cozida", emoji: "🥣", por100: 9, porcao: 100 },
+  { nome: "Grão de bico cozido", emoji: "🥣", por100: 9, porcao: 100 },
+  { nome: "Tofu", emoji: "🧈", por100: 8, porcao: 100 },
 ];
+const proteinaDe = (por100, gramas) => Math.round((por100 * gramas) / 100);
 const PEDRAS_POR_COROA = 50;
 const DIAS_PT = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
 const MESES_PT = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
@@ -92,6 +94,9 @@ export default function PlannerVida({ usuario, onVoltar }) {
   const [copos, setCopos] = useState({});
   const [proteinaMeta, setProteinaMeta] = useState(META_PROTEINA_PADRAO);
   const [proteinaDia, setProteinaDia] = useState({}); // { "2026-7-23": [{nome,g}] }
+  const [protAlimIdx, setProtAlimIdx] = useState(0);   // alimento escolhido no peso personalizado
+  const [protGramas, setProtGramas] = useState("");     // gramas digitados
+  const [mostrarTabelaProt, setMostrarTabelaProt] = useState(false);
   const [diario, setDiario] = useState([]);
   const [aberto, setAberto] = useState("s1d1");
   const [recAberta, setRecAberta] = useState(-1);
@@ -1034,19 +1039,83 @@ export default function PlannerVida({ usuario, onVoltar }) {
           </div>
         </div>
 
-        {/* Botões rápidos */}
-        <div className="text-xs font-bold mb-2" style={{ color: C.green, letterSpacing: "0.12em", textTransform: "uppercase" }}>Toque para somar</div>
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          {PROTEINAS.map((p, i) => (
-            <button key={i} onClick={() => addProteina(p)}
-              className="flex items-center gap-2 text-left rounded-xl px-3 py-2 active:scale-95 transition"
-              style={{ background: C.card, border: `1px solid ${C.line}` }}>
-              <span className="text-lg">{p.emoji}</span>
-              <span className="flex-1 text-xs" style={{ color: C.ink, lineHeight: 1.2 }}>{p.nome}</span>
-              <span className="text-xs font-bold" style={{ color: C.green }}>+{p.g}g</span>
-            </button>
-          ))}
+        {/* Peso personalizado (usando a balança) */}
+        <div className="rounded-2xl mb-3" style={estiloCartao}>
+          <div className="text-xs font-bold mb-2" style={{ color: C.green, letterSpacing: "0.12em", textTransform: "uppercase" }}>⚖️ Pesou na balança? Calcule aqui</div>
+          <div className="flex items-center gap-2">
+            <select value={protAlimIdx} onChange={(e) => setProtAlimIdx(Number(e.target.value))}
+              className="flex-1 rounded-lg px-2 py-2 text-sm" style={{ border: `1px solid ${C.line}`, background: "#fff", color: C.ink }}>
+              {PROTEINA_ALIMENTOS.map((a, i) => (
+                <option key={i} value={i}>{a.emoji} {a.nome}</option>
+              ))}
+            </select>
+            <input type="number" inputMode="numeric" value={protGramas}
+              onChange={(e) => setProtGramas(e.target.value)} placeholder="gramas"
+              className="w-20 rounded-lg px-2 py-2 text-sm text-center" style={{ border: `1px solid ${C.line}`, background: "#fff", color: C.ink }} />
+            <span className="text-xs" style={{ color: C.inkSoft }}>g</span>
+          </div>
+          {Number(protGramas) > 0 && (
+            <div className="flex items-center justify-between mt-2">
+              <span className="text-sm" style={{ color: C.inkSoft }}>
+                {protGramas}g de {PROTEINA_ALIMENTOS[protAlimIdx].nome} ={" "}
+                <b style={{ color: C.green }}>{proteinaDe(PROTEINA_ALIMENTOS[protAlimIdx].por100, Number(protGramas))}g</b> de proteína
+              </span>
+              <button onClick={() => {
+                  const al = PROTEINA_ALIMENTOS[protAlimIdx];
+                  const gr = Number(protGramas);
+                  addProteina({ nome: `${al.nome} ${gr}g`, g: proteinaDe(al.por100, gr) });
+                  setProtGramas("");
+                }}
+                className="rounded-lg px-3 py-1.5 text-sm font-bold" style={{ background: C.green, color: "#fff" }}>
+                + Somar
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* Botões rápidos (porção sugerida) */}
+        <div className="text-xs font-bold mb-2" style={{ color: C.green, letterSpacing: "0.12em", textTransform: "uppercase" }}>Toque para somar a porção</div>
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          {PROTEINA_ALIMENTOS.map((p, i) => {
+            const g = proteinaDe(p.por100, p.porcao);
+            return (
+              <button key={i} onClick={() => addProteina({ nome: `${p.nome} ${p.porcao}g`, g })}
+                className="flex items-center gap-2 text-left rounded-xl px-3 py-2 active:scale-95 transition"
+                style={{ background: C.card, border: `1px solid ${C.line}` }}>
+                <span className="text-lg">{p.emoji}</span>
+                <span className="flex-1 text-xs" style={{ color: C.ink, lineHeight: 1.2 }}>{p.nome} <span style={{ color: C.inkSoft }}>{p.porcao}g</span></span>
+                <span className="text-xs font-bold" style={{ color: C.green }}>+{g}g</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Tabela de referência */}
+        <button onClick={() => setMostrarTabelaProt(!mostrarTabelaProt)}
+          className="w-full flex items-center justify-between rounded-xl px-3 py-2 mb-2"
+          style={{ background: C.indigoSoft, color: C.indigo, border: `1px solid ${C.line}` }}>
+          <span className="text-sm font-bold">📋 Tabela: alimento × proteína</span>
+          <span>{mostrarTabelaProt ? "−" : "+"}</span>
+        </button>
+        {mostrarTabelaProt && (
+          <div className="rounded-2xl mb-3 overflow-hidden" style={estiloCartao}>
+            <div className="grid grid-cols-3 text-xs font-bold pb-2 mb-1" style={{ color: C.inkSoft, borderBottom: `1px solid ${C.line}` }}>
+              <span>Alimento</span>
+              <span className="text-center">Por 100g</span>
+              <span className="text-right">Porção</span>
+            </div>
+            {PROTEINA_ALIMENTOS.map((a, i) => (
+              <div key={i} className="grid grid-cols-3 text-sm py-1.5 items-center" style={{ borderBottom: i < PROTEINA_ALIMENTOS.length - 1 ? `1px solid ${C.line}` : "none" }}>
+                <span style={{ color: C.ink }}>{a.emoji} {a.nome}</span>
+                <span className="text-center font-bold" style={{ color: C.green }}>{a.por100}g</span>
+                <span className="text-right" style={{ color: C.inkSoft }}>{a.porcao}g ≈ <b style={{ color: C.green }}>{proteinaDe(a.por100, a.porcao)}g</b></span>
+              </div>
+            ))}
+            <div className="text-xs mt-2" style={{ color: C.inkSoft, lineHeight: 1.5 }}>
+              Ex.: 120g de frango ≈ 37g de proteína. "Por 100g" é o que costuma aparecer na embalagem/balança. Valores aproximados (alimento já preparado).
+            </div>
+          </div>
+        )}
 
         {/* Registro de hoje */}
         {lista.length > 0 && (
