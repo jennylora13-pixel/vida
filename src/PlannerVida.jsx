@@ -66,7 +66,7 @@ function Confete() {
   );
 }
 
-export default function PlannerVida() {
+export default function PlannerVida({ usuario, onVoltar }) {
   const [aba, setAba] = useState("semanas");
   const [semana, setSemana] = useState(1);
   const [versao, setVersao] = useState("padrao");
@@ -144,6 +144,13 @@ export default function PlannerVida() {
     })();
     return () => { ativo = false; };
   }, [sessao]);
+
+  /* Entra automaticamente com o nome do login inicial — sem pedir de novo. */
+  useEffect(() => {
+    if (usuario && !sessao) {
+      setSessao({ nome: usuario, chave: chaveDe(usuario, "acesso") });
+    }
+  }, [usuario, sessao]);
 
   async function salvar(parcial) {
     if (!sessao) return;
@@ -991,7 +998,11 @@ export default function PlannerVida() {
   }
 
   /* ---------- render ---------- */
-  if (!sessao) return TelaEntrada();
+  if (!sessao) {
+    // Com login unificado, entra sozinho — mostra um vazio enquanto carrega.
+    if (usuario) return <div style={{ minHeight: "100vh", background: C.paper }} />;
+    return TelaEntrada();
+  }
 
   return (
     <div style={{ minHeight: "100vh", background: C.paper, color: C.ink, fontFamily: "system-ui, -apple-system, sans-serif" }}>
@@ -1021,9 +1032,9 @@ export default function PlannerVida() {
               className="rounded-full flex items-center justify-center" style={{ width: 34, height: 34, background: aba === "buscar" ? C.aqua : C.card, color: aba === "buscar" ? "#fff" : C.inkSoft, border: `1px solid ${C.line}` }}>🔎</button>
             <button onClick={() => setAba("avisos")} aria-label="Avisos"
               className={`rounded-full flex items-center justify-center ${avisosAtivo ? "animate-floaty" : ""}`} style={{ width: 34, height: 34, background: aba === "avisos" ? C.blue : C.card, color: aba === "avisos" ? "#fff" : C.inkSoft, border: `1px solid ${C.line}` }}>{avisosAtivo ? "🔔" : "🔕"}</button>
-            <button onClick={sair} className="rounded-full px-3 py-1.5 text-xs font-semibold"
+            <button onClick={() => (onVoltar ? onVoltar() : sair())} className="rounded-full px-3 py-1.5 text-xs font-semibold"
               style={{ background: C.card, border: `1px solid ${C.line}`, color: C.inkSoft }}>
-              Sair
+              {onVoltar ? "Trocar app" : "Sair"}
             </button>
           </div>
         </div>

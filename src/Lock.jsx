@@ -130,7 +130,7 @@ export default function Lock() {
   }
 
   if (estado === "aberto") {
-    return <Launcher onSair={bloquear} />;
+    return <Launcher onSair={bloquear} usuario={creds?.nome} />;
   }
 
   if (estado === "setup") {
