@@ -143,6 +143,50 @@ export const TREINO = {
   ],
 };
 
+/* ---------------- TREINO DE FORÇA (com halteres, corda, bike, peso do corpo) ---------------- */
+export const FORCA = {
+  intro: "Treino de força em casa para ganhar músculo — pernas, glúteos e braços. Comece leve, capriche na execução e evolua aos poucos. 2x por semana cada treino.",
+  treinos: [
+    {
+      id: "pernas",
+      nome: "Pernas e Glúteos",
+      emoji: "🦵",
+      foco: "Firmar as coxas e levantar o glúteo",
+      freq: "2x/semana (ex.: segunda e quinta)",
+      exercicios: [
+        { nome: "Agachamento na cadeira", series: "3 × 12", como: "Sente e levante de uma cadeira, peito aberto e joelhos alinhados. Para evoluir, segure um halter junto ao peito." },
+        { nome: "Avanço (afundo)", series: "3 × 10 cada perna", como: "Passo à frente dobrando o joelho até ~90°. Apoie a mão na parede se precisar de equilíbrio." },
+        { nome: "Ponte de glúteo", series: "3 × 15", como: "Deitada de costas, joelhos dobrados, suba o quadril apertando o glúteo lá em cima. Halter sobre o quadril para dificultar." },
+        { nome: "Elevação de panturrilha", series: "3 × 20", como: "Na ponta dos pés, suba e desça devagar. Segure halteres para mais carga." },
+        { nome: "Cadeira na parede (isometria)", series: "3 × 20–40s", como: "Costas na parede, joelhos a 90°, segure a posição respirando." },
+        { nome: "Corda ou bike (final)", series: "10–15 min", como: "Feche com corda intervalada ou bicicleta para o coração e a circulação (ótimo para as pernas)." },
+      ],
+    },
+    {
+      id: "bracos",
+      nome: "Braços e Costas",
+      emoji: "💪",
+      foco: "Ganhar força nos braços — rumo à 1ª flexão!",
+      freq: "2x/semana (ex.: terça e sexta)",
+      exercicios: [
+        { nome: "Flexão na parede", series: "3 × 10", como: "Mãos na parede na altura do peito, empurre o corpo. É o 1º degrau para a flexão no chão." },
+        { nome: "Rosca direta (halteres)", series: "3 × 12", como: "Cotovelos junto ao corpo, suba o halter dobrando o cotovelo, sem balançar o tronco." },
+        { nome: "Desenvolvimento de ombro", series: "3 × 10", como: "Halteres na altura dos ombros, empurre para cima até esticar os braços." },
+        { nome: "Remada curvada", series: "3 × 12", como: "Tronco inclinado à frente, costas retas, puxe os halteres em direção à cintura (aperta as costas)." },
+        { nome: "Tríceps na cadeira", series: "3 × 10", como: "Mãos na beirada da cadeira, desça e suba o corpo dobrando os cotovelos para trás." },
+        { nome: "Prancha", series: "3 × 15–30s", como: "Apoio nos antebraços, corpo reto como uma tábua. Pode apoiar os joelhos no chão no começo." },
+      ],
+    },
+  ],
+  progressao: [
+    "Semanas 1–2: pesos leves e foco total na execução correta (qualidade > quantidade).",
+    "Semanas 3–4: aumente 1–2 repetições, ou um pouco de peso, quando ficar fácil.",
+    "Flexão passo a passo: parede → apoio numa bancada → joelhos no chão → flexão completa.",
+    "Descanse ao menos 1 dia entre treinos do mesmo grupo. A proteína (aba 🥩) constrói o músculo — treino + comida andam juntos.",
+    "Sentiu dor aguda (não o cansaço normal)? Pare e procure orientação. Respeite o seu corpo. 🙏",
+  ],
+};
+
 export const PREP = {
   A: [
     { id: "pA-feijao", txt: "Cozinhar o feijão da semana" },

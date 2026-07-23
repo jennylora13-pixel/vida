@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import {
   C, serif, REFEICOES, SEMANA1, SEMANA2, ROTINA, CARDAPIO, TREINO, PREP,
-  MARIDO, RECEITAS, CHAS, COMPRAS, HABITOS, EMOCOES, TROCAS, TEMAS, AVISOS_PADRAO,
+  MARIDO, RECEITAS, CHAS, COMPRAS, HABITOS, EMOCOES, TROCAS, TEMAS, AVISOS_PADRAO, FORCA,
 } from "./data.js";
 import { storage } from "./storage.js";
 import { construirIndice, buscar } from "./searchIndex.js";
@@ -52,6 +52,7 @@ const ABAS = [
   ["temas", "📚 Temas", C.indigo, C.indigoSoft],
   ["emocoes", "💗 Emoções", C.rose, C.roseSoft],
   ["proteina", "🥩 Proteína", C.green, C.greenSoft],
+  ["forca", "🏋️ Força", C.green, C.greenSoft],
   ["treino", "💪 Treino", C.green, C.greenSoft],
   ["prep", "🍲 Domingo", C.gold, C.goldSoft],
   ["marido", "🥪 Marido", C.blue, C.blueSoft],
@@ -1009,6 +1010,63 @@ export default function PlannerVida({ usuario, onVoltar }) {
     );
   }
 
+  function TelaForca() {
+    return (
+      <>
+        <h2 className="mb-3" style={estiloTitulo}>Treino de força</h2>
+        <div className="rounded-2xl px-4 py-3 mb-3 text-sm" style={{ background: C.greenSoft, border: `1px solid ${C.green}`, color: "#2C5A2C", lineHeight: 1.55 }}>
+          {FORCA.intro}
+        </div>
+
+        {FORCA.treinos.map((t) => {
+          const ids = t.exercicios.map((_, i) => `forca-${t.id}-${i}`);
+          const feitos = ids.filter((id) => checks[id]).length;
+          return (
+            <div key={t.id} className="rounded-2xl mb-3" style={estiloCartao}>
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="font-bold" style={{ color: C.ink, fontSize: 16 }}>{t.emoji} {t.nome}</h3>
+                <span className="text-xs font-bold" style={{ color: feitos === ids.length && feitos > 0 ? C.green : C.inkSoft }}>{feitos}/{ids.length}</span>
+              </div>
+              <div className="text-xs mb-3" style={{ color: C.inkSoft }}>{t.foco} · {t.freq}</div>
+              {t.exercicios.map((ex, i) => {
+                const id = `forca-${t.id}-${i}`;
+                const on = !!checks[id];
+                return (
+                  <button key={id} onClick={() => marcar(id)} className="w-full flex gap-3 py-2 text-left" style={{ borderTop: i > 0 ? `1px solid ${C.line}` : "none" }}>
+                    <span aria-hidden="true" className={`flex items-center justify-center rounded-md shrink-0 mt-0.5 ${on ? "animate-pop" : ""}`}
+                      style={{ width: 20, height: 20, background: on ? C.green : "transparent", border: `2px solid ${on ? C.green : C.line}`, color: "#fff", fontSize: 12 }}>
+                      {on ? "✓" : ""}
+                    </span>
+                    <span className="flex-1">
+                      <span className="flex items-baseline justify-between gap-2">
+                        <span className="text-sm font-bold" style={{ color: on ? C.inkSoft : C.ink, textDecoration: on ? "line-through" : "none" }}>{ex.nome}</span>
+                        <span className="text-xs font-bold shrink-0" style={{ color: C.green }}>{ex.series}</span>
+                      </span>
+                      <span className="block text-xs mt-0.5" style={{ color: C.inkSoft, lineHeight: 1.45 }}>{ex.como}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })}
+
+        <div className="rounded-2xl mb-3" style={estiloCartao}>
+          <div className="text-xs font-bold mb-2" style={{ color: C.indigo, letterSpacing: "0.12em", textTransform: "uppercase" }}>📈 Como evoluir</div>
+          {FORCA.progressao.map((p, i) => (
+            <div key={i} className="flex gap-2 py-1 text-sm" style={{ color: C.ink, lineHeight: 1.5 }}>
+              <span style={{ color: C.green }}>•</span><span>{p}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-2xl px-4 py-3 text-sm" style={{ background: `linear-gradient(135deg, ${C.rose}, ${C.gold})`, color: "#fff", lineHeight: 1.6 }}>
+          💛 Você não precisa ser forte hoje — só um pouco mais forte que ontem. Um treino de cada vez. "Tudo posso naquele que me fortalece." (Fp 4:13)
+        </div>
+      </>
+    );
+  }
+
   function TelaProteina() {
     const lista = proteinaDia[chaveHoje] || [];
     const total = lista.reduce((s, x) => s + (x.g || 0), 0);
@@ -1335,6 +1393,7 @@ export default function PlannerVida({ usuario, onVoltar }) {
             {aba === "temas" && TelaTemas()}
             {aba === "emocoes" && TelaEmocoes()}
             {aba === "proteina" && TelaProteina()}
+            {aba === "forca" && TelaForca()}
             {aba === "treino" && ListaBloco({
               dados: TREINO, prefixo: "tr", titulo: "Treino da semana",
               legenda: "Semanas 1 e 3 usam o bloco A; semanas 2 e 4 usam o bloco B. Os cinco pilares estão no tema “Exercícios inegociáveis para mulheres”.",
