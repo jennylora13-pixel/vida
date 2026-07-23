@@ -36,7 +36,7 @@ function BotaoTrocar({ onTrocar }) {
   );
 }
 
-export default function Launcher({ onSair }) {
+export default function Launcher({ onSair, usuario }) {
   const [escolha, setEscolha] = useState(undefined); // undefined = carregando
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function Launcher({ onSair }) {
     return (
       <>
         <BotaoTrocar onTrocar={trocar} />
-        <PlannerVida />
+        <PlannerVida usuario={usuario} onVoltar={trocar} />
       </>
     );
   }
