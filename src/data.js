@@ -382,4 +382,8 @@ export const AVISOS_PADRAO = [
   { id: "av-emocao-manha", hora: "10:30", tipo: "emocao", emoji: "💗", titulo: "Como está seu coração?", corpo: "Pare 1 minuto: que emoção você sente agora? Nomeie e entregue a Deus. 'Lança sobre Ele a tua ansiedade' (1Pe 5:7)." },
   { id: "av-emocao-tarde", hora: "15:30", tipo: "emocao", emoji: "🫶", titulo: "Check-in das emoções", corpo: "Ansiosa, cansada ou estressada? Escolha uma troca saudável (chá, caminhar, orar) e anote no diário." },
   { id: "av-gratidao-noite", hora: "21:00", tipo: "emocao", emoji: "🙏", titulo: "Momento de gratidão", corpo: "Antes de dormir, escreva 3 coisas boas de hoje. A gratidão acalma o coração." },
+  // Lembretes de treino de força (por dia da semana: 1=seg ... 5=sex)
+  { id: "av-treino-pernas", hora: "17:00", tipo: "treino", dias: [1, 4], emoji: "🦵", titulo: "Hoje é dia de Pernas e Glúteos", corpo: "Bora fortalecer! Agachamento, avanço, ponte de glúteo… Abra a aba 🏋️ Força." },
+  { id: "av-treino-bracos", hora: "17:00", tipo: "treino", dias: [2, 5], emoji: "💪", titulo: "Hoje é dia de Braços e Costas", corpo: "Rumo à 1ª flexão! Flexão na parede, rosca, remada… Abra a aba 🏋️ Força." },
+  { id: "av-treino-pilates", hora: "17:00", tipo: "treino", dias: [3], emoji: "🧘‍♀️", titulo: "Hoje é dia de Pilates/Yoga", corpo: "Mobilidade, core e respiração. Cuide do corpo com leveza e oração." },
 ];

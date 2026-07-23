@@ -64,6 +64,8 @@ export function useAvisos({ ativo, itens, onDisparo }) {
       AVISOS_PADRAO.forEach((av) => {
         const ligado = itens ? itens[av.id] !== false : true; // padrão: ligado
         if (!ligado) return;
+        // avisos com dias específicos (ex.: treino) só disparam nesses dias da semana
+        if (av.dias && !av.dias.includes(agora.getDay())) return;
         if (av.hora !== hhmm) return;
         if (disparos.ids.includes(av.id)) return;
 
