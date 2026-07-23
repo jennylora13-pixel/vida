@@ -546,6 +546,11 @@ export default function PlannerVida({ usuario, onVoltar }) {
                 </button>
               ))}
             </div>
+            {versao === "proteina" && (
+              <div className="rounded-xl px-3 py-2 mb-3 text-xs" style={{ background: C.greenSoft, border: `1px solid ${C.green}`, color: "#2C5A2C", lineHeight: 1.5 }}>
+                💪 Versão reforçada para ganho de músculo: <b>frango ou peixe 150g</b> no almoço e <b>2 ovos ou 1 shake de whey</b> no jantar. Acompanhe o total na aba <b>🥩 Proteína</b> (meta ~110g/dia).
+              </div>
+            )}
             <div className="rounded-xl px-3 py-2 mb-3 text-xs" style={{ background: C.goldSoft, border: `1px solid ${C.gold}`, color: "#7A5B12", lineHeight: 1.5 }}>
               💧 Todos os dias: em jejum, beber 500ml de água &nbsp;•&nbsp; 🚫 Sem carboidrato no jantar
             </div>
