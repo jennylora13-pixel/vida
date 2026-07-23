@@ -36,7 +36,7 @@ function BotaoTrocar({ onTrocar }) {
   );
 }
 
-export default function Launcher() {
+export default function Launcher({ onSair }) {
   const [escolha, setEscolha] = useState(undefined); // undefined = carregando
 
   useEffect(() => {
@@ -132,6 +132,15 @@ export default function Launcher() {
       <p className="text-xs text-stone-400 mt-8 text-center max-w-xs">
         Dica: no botão “⇄ Trocar app” (canto superior) você volta para esta tela.
       </p>
+
+      {onSair && (
+        <button
+          onClick={onSair}
+          className="mt-4 text-xs text-stone-400 underline"
+        >
+          🔒 Bloquear e sair
+        </button>
+      )}
     </div>
   );
 }

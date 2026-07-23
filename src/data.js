@@ -334,4 +334,8 @@ export const AVISOS_PADRAO = [
   { id: "av-jantar", hora: "19:00", tipo: "refeicao", emoji: "🍽️", titulo: "Jantar", corpo: "Jantar até 19h30 para fechar a janela de 12h. Sem carbo à noite." },
   { id: "av-cha", hora: "20:30", tipo: "tarefa", emoji: "🍵", titulo: "Chá da noite + magnésio", corpo: "Chá calmante e magnésio ★ — preparando o corpo para dormir." },
   { id: "av-telas", hora: "21:30", tipo: "tarefa", emoji: "🌙", titulo: "Desligar as telas", corpo: "Modo noturno. Sono de qualidade também emagrece 💤" },
+  // Lembretes de emoções ao longo do dia
+  { id: "av-emocao-manha", hora: "10:30", tipo: "emocao", emoji: "💗", titulo: "Como está seu coração?", corpo: "Pare 1 minuto: que emoção você sente agora? Nomeie e entregue a Deus. 'Lança sobre Ele a tua ansiedade' (1Pe 5:7)." },
+  { id: "av-emocao-tarde", hora: "15:30", tipo: "emocao", emoji: "🫶", titulo: "Check-in das emoções", corpo: "Ansiosa, cansada ou estressada? Escolha uma troca saudável (chá, caminhar, orar) e anote no diário." },
+  { id: "av-gratidao-noite", hora: "21:00", tipo: "emocao", emoji: "🙏", titulo: "Momento de gratidão", corpo: "Antes de dormir, escreva 3 coisas boas de hoje. A gratidão acalma o coração." },
 ];
