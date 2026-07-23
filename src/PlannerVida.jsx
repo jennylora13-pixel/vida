@@ -24,6 +24,22 @@ function chaveDe(nome, codigo) {
   return `${PREFIXO}:${apelido(nome)}:${codigo}`;
 }
 const META_COPOS = 8;
+const META_PROTEINA_PADRAO = 110; // g/dia — meta padrão (editável). Base: ganho muscular ~1,6 g/kg.
+// Alimentos ricos em proteína com valor aproximado por porção (em gramas de proteína)
+const PROTEINAS = [
+  { nome: "Frango grelhado 120g", g: 30, emoji: "🍗" },
+  { nome: "Peixe 120g", g: 26, emoji: "🐟" },
+  { nome: "Carne magra 120g", g: 32, emoji: "🥩" },
+  { nome: "Ovo (1 un.)", g: 6, emoji: "🥚" },
+  { nome: "Whey (1 scoop)", g: 24, emoji: "🥤" },
+  { nome: "Atum (1 lata)", g: 26, emoji: "🥫" },
+  { nome: "Iogurte natural (170g)", g: 15, emoji: "🥛" },
+  { nome: "Queijo cottage (100g)", g: 11, emoji: "🧀" },
+  { nome: "Concha de feijão (65g)", g: 5, emoji: "🫘" },
+  { nome: "Concha de lentilha (65g)", g: 9, emoji: "🥣" },
+  { nome: "Concha de grão de bico (65g)", g: 7, emoji: "🥣" },
+  { nome: "Tofu (100g)", g: 8, emoji: "🧈" },
+];
 const PEDRAS_POR_COROA = 50;
 const DIAS_PT = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
 const MESES_PT = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
@@ -33,6 +49,7 @@ const ABAS = [
   ["buscar", "🔎 Buscar", C.aqua, C.blueSoft],
   ["temas", "📚 Temas", C.indigo, C.indigoSoft],
   ["emocoes", "💗 Emoções", C.rose, C.roseSoft],
+  ["proteina", "🥩 Proteína", C.green, C.greenSoft],
   ["treino", "💪 Treino", C.green, C.greenSoft],
   ["prep", "🍲 Domingo", C.gold, C.goldSoft],
   ["marido", "🥪 Marido", C.blue, C.blueSoft],
@@ -73,6 +90,8 @@ export default function PlannerVida({ usuario, onVoltar }) {
   const [blocoTreino, setBlocoTreino] = useState("A");
   const [checks, setChecks] = useState({});
   const [copos, setCopos] = useState({});
+  const [proteinaMeta, setProteinaMeta] = useState(META_PROTEINA_PADRAO);
+  const [proteinaDia, setProteinaDia] = useState({}); // { "2026-7-23": [{nome,g}] }
   const [diario, setDiario] = useState([]);
   const [aberto, setAberto] = useState("s1d1");
   const [recAberta, setRecAberta] = useState(-1);
@@ -127,6 +146,8 @@ export default function PlannerVida({ usuario, onVoltar }) {
           const s = JSON.parse(r.value);
           setChecks(s.checks || {});
           setCopos(s.copos || {});
+          setProteinaMeta(s.proteinaMeta || META_PROTEINA_PADRAO);
+          setProteinaDia(s.proteinaDia || {});
           setDiario(s.diario || []);
           setVersao(s.versao || "padrao");
           setSemana(s.semana || 1);
@@ -155,7 +176,7 @@ export default function PlannerVida({ usuario, onVoltar }) {
   async function salvar(parcial) {
     if (!sessao) return;
     const estado = {
-      checks, copos, diario, versao, semana, mimo, gravidez,
+      checks, copos, proteinaMeta, proteinaDia, diario, versao, semana, mimo, gravidez,
       aprendidos, reforcos, avisosAtivo, avisosItens, ...parcial,
     };
     try {
@@ -263,6 +284,25 @@ export default function PlannerVida({ usuario, onVoltar }) {
     const novo = { ...copos, [chaveHoje]: n === atual ? n - 1 : n };
     setCopos(novo);
     salvar({ copos: novo });
+  }
+
+  function addProteina(item) {
+    const lista = proteinaDia[chaveHoje] || [];
+    const novo = { ...proteinaDia, [chaveHoje]: [...lista, { nome: item.nome, g: item.g }] };
+    setProteinaDia(novo);
+    salvar({ proteinaDia: novo });
+  }
+  function removerProteina(idx) {
+    const lista = proteinaDia[chaveHoje] || [];
+    const nova = lista.filter((_, i) => i !== idx);
+    const novo = { ...proteinaDia, [chaveHoje]: nova };
+    setProteinaDia(novo);
+    salvar({ proteinaDia: novo });
+  }
+  function alterarMetaProteina(v) {
+    const n = Math.max(0, Math.min(400, Number(v) || 0));
+    setProteinaMeta(n);
+    salvar({ proteinaMeta: n });
   }
 
   function trocarVersao(v) { setVersao(v); salvar({ versao: v }); }
@@ -959,6 +999,80 @@ export default function PlannerVida({ usuario, onVoltar }) {
     );
   }
 
+  function TelaProteina() {
+    const lista = proteinaDia[chaveHoje] || [];
+    const total = lista.reduce((s, x) => s + (x.g || 0), 0);
+    const pct = proteinaMeta > 0 ? Math.min(100, Math.round((total / proteinaMeta) * 100)) : 0;
+    const falta = Math.max(0, proteinaMeta - total);
+    const bateu = total >= proteinaMeta && proteinaMeta > 0;
+    return (
+      <>
+        <h2 className="mb-3" style={estiloTitulo}>Proteína do dia</h2>
+
+        {/* Progresso */}
+        <div className="rounded-2xl mb-3" style={estiloCartao}>
+          <div className="flex items-end justify-between mb-2">
+            <div>
+              <div className="text-3xl font-bold" style={{ color: bateu ? C.green : C.ink }}>
+                {total}<span className="text-lg" style={{ color: C.inkSoft }}> / {proteinaMeta} g</span>
+              </div>
+              <div className="text-xs mt-0.5" style={{ color: C.inkSoft }}>
+                {bateu ? "🎉 Meta batida! Muito bem, Maravilhosa!" : `Faltam ${falta}g para a meta de hoje`}
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
+              <label className="text-xs" style={{ color: C.inkSoft }}>Meta</label>
+              <input type="number" inputMode="numeric" value={proteinaMeta}
+                onChange={(e) => alterarMetaProteina(e.target.value)}
+                className="w-16 rounded-lg px-2 py-1 text-sm text-center"
+                style={{ border: `1px solid ${C.line}`, background: "#fff", color: C.ink }} />
+              <span className="text-xs" style={{ color: C.inkSoft }}>g</span>
+            </div>
+          </div>
+          <div className="h-3 rounded-full overflow-hidden" style={{ background: C.line }}>
+            <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: bateu ? C.green : C.rose }} />
+          </div>
+        </div>
+
+        {/* Botões rápidos */}
+        <div className="text-xs font-bold mb-2" style={{ color: C.green, letterSpacing: "0.12em", textTransform: "uppercase" }}>Toque para somar</div>
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          {PROTEINAS.map((p, i) => (
+            <button key={i} onClick={() => addProteina(p)}
+              className="flex items-center gap-2 text-left rounded-xl px-3 py-2 active:scale-95 transition"
+              style={{ background: C.card, border: `1px solid ${C.line}` }}>
+              <span className="text-lg">{p.emoji}</span>
+              <span className="flex-1 text-xs" style={{ color: C.ink, lineHeight: 1.2 }}>{p.nome}</span>
+              <span className="text-xs font-bold" style={{ color: C.green }}>+{p.g}g</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Registro de hoje */}
+        {lista.length > 0 && (
+          <div className="rounded-2xl mb-3" style={estiloCartao}>
+            <div className="text-xs font-bold mb-2" style={{ color: C.rose, letterSpacing: "0.12em", textTransform: "uppercase" }}>Comido hoje</div>
+            {lista.map((x, i) => (
+              <div key={i} className="flex items-center justify-between py-1.5">
+                <span className="text-sm" style={{ color: C.ink }}>{x.nome}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold" style={{ color: C.green }}>{x.g}g</span>
+                  <button onClick={() => removerProteina(i)} aria-label="remover"
+                    className="rounded-full flex items-center justify-center"
+                    style={{ width: 22, height: 22, background: C.roseSoft, color: C.rose, fontSize: 14 }}>×</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="rounded-2xl px-4 py-4 text-sm" style={{ background: `linear-gradient(135deg, ${C.green}, ${C.aqua})`, color: "#fff", lineHeight: 1.6 }}>
+          <b>💪 Para ganhar músculo:</b> distribua a proteína ao longo do dia (café, almoço, lanche e jantar) e combine com treino de força. Os valores são aproximados — ajuste com seu(sua) nutricionista.
+        </div>
+      </>
+    );
+  }
+
   function TelaCompras() {
     return (
       <>
@@ -1146,6 +1260,7 @@ export default function PlannerVida({ usuario, onVoltar }) {
             {aba === "buscar" && TelaBuscar()}
             {aba === "temas" && TelaTemas()}
             {aba === "emocoes" && TelaEmocoes()}
+            {aba === "proteina" && TelaProteina()}
             {aba === "treino" && ListaBloco({
               dados: TREINO, prefixo: "tr", titulo: "Treino da semana",
               legenda: "Semanas 1 e 3 usam o bloco A; semanas 2 e 4 usam o bloco B. Os cinco pilares estão no tema “Exercícios inegociáveis para mulheres”.",
