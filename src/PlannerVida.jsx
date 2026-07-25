@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import {
   C, serif, REFEICOES, SEMANA1, SEMANA2, ROTINA, CARDAPIO, TREINO, PREP,
-  MARIDO, RECEITAS, CHAS, COMPRAS, HABITOS, EMOCOES, TROCAS, TEMAS, AVISOS_PADRAO, FORCA,
+  MARIDO, RECEITAS, CHAS, COMPRAS, HABITOS, EMOCOES, TROCAS, TEMAS, AVISOS_PADRAO, FORCA, SUPLEMENTOS,
 } from "./data.js";
 import { storage } from "./storage.js";
 import { construirIndice, buscar } from "./searchIndex.js";
@@ -52,6 +52,7 @@ const ABAS = [
   ["temas", "📚 Temas", C.indigo, C.indigoSoft],
   ["emocoes", "💗 Emoções", C.rose, C.roseSoft],
   ["proteina", "🥩 Proteína", C.green, C.greenSoft],
+  ["suplementos", "💊 Suplementos", C.aqua, C.blueSoft],
   ["forca", "🏋️ Força", C.green, C.greenSoft],
   ["treino", "💪 Treino", C.green, C.greenSoft],
   ["prep", "🍲 Domingo", C.gold, C.goldSoft],
@@ -95,6 +96,7 @@ export default function PlannerVida({ usuario, onVoltar }) {
   const [copos, setCopos] = useState({});
   const [proteinaMeta, setProteinaMeta] = useState(META_PROTEINA_PADRAO);
   const [proteinaDia, setProteinaDia] = useState({}); // { "2026-7-23": [{nome,g}] }
+  const [suplementosDia, setSuplementosDia] = useState({}); // { "2026-7-23": {prenatal:true} }
   const [protAlimIdx, setProtAlimIdx] = useState(0);   // alimento escolhido no peso personalizado
   const [protGramas, setProtGramas] = useState("");     // gramas digitados
   const [mostrarTabelaProt, setMostrarTabelaProt] = useState(false);
@@ -154,6 +156,7 @@ export default function PlannerVida({ usuario, onVoltar }) {
           setCopos(s.copos || {});
           setProteinaMeta(s.proteinaMeta || META_PROTEINA_PADRAO);
           setProteinaDia(s.proteinaDia || {});
+          setSuplementosDia(s.suplementosDia || {});
           setDiario(s.diario || []);
           setVersao(s.versao || "padrao");
           setSemana(s.semana || 1);
@@ -182,7 +185,7 @@ export default function PlannerVida({ usuario, onVoltar }) {
   async function salvar(parcial) {
     if (!sessao) return;
     const estado = {
-      checks, copos, proteinaMeta, proteinaDia, diario, versao, semana, mimo, gravidez,
+      checks, copos, proteinaMeta, proteinaDia, suplementosDia, diario, versao, semana, mimo, gravidez,
       aprendidos, reforcos, avisosAtivo, avisosItens, ...parcial,
     };
     try {
@@ -309,6 +312,14 @@ export default function PlannerVida({ usuario, onVoltar }) {
     const n = Math.max(0, Math.min(400, Number(v) || 0));
     setProteinaMeta(n);
     salvar({ proteinaMeta: n });
+  }
+
+  function alternarSuplemento(id) {
+    const doDia = suplementosDia[chaveHoje] || {};
+    const novoDia = { ...doDia, [id]: !doDia[id] };
+    const novo = { ...suplementosDia, [chaveHoje]: novoDia };
+    setSuplementosDia(novo);
+    salvar({ suplementosDia: novo });
   }
 
   function trocarVersao(v) { setVersao(v); salvar({ versao: v }); }
@@ -1010,6 +1021,43 @@ export default function PlannerVida({ usuario, onVoltar }) {
     );
   }
 
+  function TelaSuplementos() {
+    const doDia = suplementosDia[chaveHoje] || {};
+    const tomados = SUPLEMENTOS.filter((s) => doDia[s.id]).length;
+    return (
+      <>
+        <h2 className="mb-3" style={estiloTitulo}>Suplementos do dia</h2>
+        <div className="rounded-2xl px-4 py-3 mb-3 text-sm" style={{ background: C.blueSoft, border: `1px solid ${C.aqua}`, color: "#1F5566", lineHeight: 1.55 }}>
+          Marque conforme for tomando. Energia para o trabalho e cuidado com a fase de engravidar. <b>Tomados hoje: {tomados}/{SUPLEMENTOS.length}</b>
+        </div>
+
+        {SUPLEMENTOS.map((s) => {
+          const on = !!doDia[s.id];
+          return (
+            <button key={s.id} onClick={() => alternarSuplemento(s.id)} className="w-full flex gap-3 rounded-2xl mb-2 px-4 py-3 text-left"
+              style={{ background: on ? C.blueSoft : C.card, border: `1px solid ${on ? C.aqua : C.line}` }}>
+              <span aria-hidden="true" className={`flex items-center justify-center rounded-md shrink-0 mt-0.5 ${on ? "animate-pop" : ""}`}
+                style={{ width: 22, height: 22, background: on ? C.aqua : "transparent", border: `2px solid ${on ? C.aqua : C.line}`, color: "#fff", fontSize: 13 }}>
+                {on ? "✓" : ""}
+              </span>
+              <span className="flex-1">
+                <span className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-bold" style={{ color: on ? C.inkSoft : C.ink, textDecoration: on ? "line-through" : "none" }}>{s.emoji} {s.nome}</span>
+                  <span className="text-xs font-bold shrink-0" style={{ color: C.aqua }}>{s.quando}</span>
+                </span>
+                <span className="block text-xs mt-0.5" style={{ color: C.inkSoft, lineHeight: 1.45 }}>{s.nota}</span>
+              </span>
+            </button>
+          );
+        })}
+
+        <div className="rounded-2xl px-4 py-3 mt-1 text-xs" style={{ background: "#FBEAEA", border: "1px solid #E8C9C9", color: "#8C3B3B", lineHeight: 1.55 }}>
+          ⚠️ Importante: esta lista é um guia geral, não receita médica. Como você está tentando engravidar, <b>confirme os suplementos e as doses com seu médico/nutricionista</b> — principalmente creatina, ferro e vitaminas. O pré-natal e a comida são a base. 🙏
+        </div>
+      </>
+    );
+  }
+
   function TelaForca() {
     return (
       <>
@@ -1393,6 +1441,7 @@ export default function PlannerVida({ usuario, onVoltar }) {
             {aba === "temas" && TelaTemas()}
             {aba === "emocoes" && TelaEmocoes()}
             {aba === "proteina" && TelaProteina()}
+            {aba === "suplementos" && TelaSuplementos()}
             {aba === "forca" && TelaForca()}
             {aba === "treino" && ListaBloco({
               dados: TREINO, prefixo: "tr", titulo: "Treino da semana",
