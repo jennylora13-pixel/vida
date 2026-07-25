@@ -187,6 +187,17 @@ export const FORCA = {
   ],
 };
 
+/* ---------------- SUPLEMENTOS (energia + fase de engravidar) ---------------- */
+export const SUPLEMENTOS = [
+  { id: "prenatal", nome: "Pré-natal (ácido fólico)", emoji: "⭐", quando: "Café da manhã", nota: "O mais importante para quem quer engravidar. Costuma já incluir B12, ferro, vitamina D e iodo." },
+  { id: "whey", nome: "Whey (proteína)", emoji: "🥤", quando: "Café ou pós-trabalho", nota: "~24g de proteína. Ajuda a bater a meta e a recuperar o corpo." },
+  { id: "creatina", nome: "Creatina (3–5g)", emoji: "💪", quando: "Qualquer hora, com água", nota: "Força e energia. Confirme com o médico por estar tentando engravidar." },
+  { id: "magnesio", nome: "Magnésio", emoji: "🌙", quando: "À noite", nota: "Recuperação muscular, cãibras e sono melhor." },
+  { id: "vitd", nome: "Vitamina D", emoji: "☀️", quando: "Café da manhã (com gordura)", nota: "Energia e humor. Ideal medir no exame antes de doses altas." },
+  { id: "omega3", nome: "Ômega-3 (DHA)", emoji: "🐟", quando: "Almoço", nota: "Bom para energia, humor e para a fase de engravidar." },
+  { id: "ferro", nome: "Ferro (só se o exame indicar)", emoji: "🩸", quando: "Longe de café e leite", nota: "Causa nº1 de cansaço, MAS só suplemente se a ferritina estiver baixa. Ferro demais faz mal." },
+];
+
 export const PREP = {
   A: [
     { id: "pA-feijao", txt: "Cozinhar o feijão da semana" },
@@ -386,4 +397,7 @@ export const AVISOS_PADRAO = [
   { id: "av-treino-pernas", hora: "17:00", tipo: "treino", dias: [1, 4], emoji: "🦵", titulo: "Hoje é dia de Pernas e Glúteos", corpo: "Bora fortalecer! Agachamento, avanço, ponte de glúteo… Abra a aba 🏋️ Força." },
   { id: "av-treino-bracos", hora: "17:00", tipo: "treino", dias: [2, 5], emoji: "💪", titulo: "Hoje é dia de Braços e Costas", corpo: "Rumo à 1ª flexão! Flexão na parede, rosca, remada… Abra a aba 🏋️ Força." },
   { id: "av-treino-pilates", hora: "17:00", tipo: "treino", dias: [3], emoji: "🧘‍♀️", titulo: "Hoje é dia de Pilates/Yoga", corpo: "Mobilidade, core e respiração. Cuide do corpo com leveza e oração." },
+  // Suplementos e kit do trabalho
+  { id: "av-suplementos", hora: "06:30", tipo: "suplemento", emoji: "💊", titulo: "Suplementos da manhã", corpo: "Pré-natal ⭐ + vitamina D no café. Creatina com água. Veja a aba 💊 Suplementos." },
+  { id: "av-kit-trabalho", hora: "06:45", tipo: "suplemento", dias: [1, 2, 3, 4, 5], emoji: "🎒", titulo: "Kit do trabalho", corpo: "Leve água (com um pouco de sal no calor), lanche (banana + castanhas) e um whey. Coma bem antes de sair!" },
 ];
